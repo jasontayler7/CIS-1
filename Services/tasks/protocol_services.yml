@@ -1,0 +1,114 @@
+---
+- name: Checking wheather the package DHCP is already installed or not.
+  command: rpm -q dhcp
+  args:
+  warn: no
+  register: dhcp_installed
+  failed_when: dhcp_installed.rc > 1
+  changed_when: no
+
+- name: Ensuring that DHCP is not enabled.
+  systemd:
+     name: dhcp
+     enabled: no
+  when: dhcp_installed.rc == 0
+
+- name: Checking wheather the package LDAP is already installed or not.
+  command: rpm -q openldap-servers
+  args:
+  warn: no
+  register: ldap_installed
+  failed_when: ldap_installed.rc > 1
+  changed_when: no
+
+- name: Ensuring that LDAP is not enabled.
+  systemd:
+     name: slapd
+     enabled: no
+  when: ldap_installed.rc == 0
+
+- name: Checking wheather the package  DNS is already installed or not.
+  command: rpm -q bind 
+  args:
+  warn: no
+  register: dns_installed
+  failed_when: dns_installed.rc > 1
+  changed_when: no
+
+- name: Ensuring that DNS is not enabled.
+  systemd:
+     name: named
+     enabled: no
+  when: dns_installed.rc == 0
+
+- name: Checking wheather the package FTP is already installed or not.
+  command: rpm -q vsftpd
+  args:
+  warn: no
+  register: ftp_installed
+  failed_when: ftp_installed.rc > 1
+  changed_when: no
+
+- name: Ensuring that FTP is not enabled.
+  systemd:
+     name: vsftpd
+     enabled: no
+  when: ftp_installed.rc == 0
+
+- name: Checking wheather the package HTTP server is already installed or not.
+  command: rpm -q httpd
+  args:
+  warn: no
+  register: http_installed
+  failed_when: http_installed.rc > 1
+  changed_when: no
+
+- name: Ensuring that HTTP is not enabled.
+  systemd:
+     name: httpd
+     enabled: no
+  when: http_installed.rc == 0
+
+- name: Checking wheather the package POP3, IMAP server is already installed or not.
+  command: rpm -q dovecot
+  args:
+  warn: no
+  register: pop_installed
+  failed_when: pop_installed.rc > 1
+  changed_when: no
+
+- name: Ensuring that POP3, IMAP is not enabled.
+  systemd:
+     name: dovecot
+     enabled: no
+  when: pop_installed.rc == 0
+
+- name: Checking wheather the package SAMBA server is already installed or not.
+  command: rpm -q samba
+  args:
+  warn: no
+  register: samba_installed
+  failed_when: samba_installed.rc > 1
+  changed_when: no
+
+- name: Ensuring that SAMBA is not enabled.
+  systemd:
+     name: smb
+     enabled: no
+  when: samba_installed.rc == 0
+
+- name: Checking wheather the package NFS server is already installed or not.
+  command: rpm -q nfs-utils
+  args:
+  warn: no
+  register: nfs_installed
+  failed_when: nfs_installed.rc > 1
+  changed_when: no
+
+- name: Ensuring that NFS is not enabled.
+  systemd:
+     name: nfs
+     enabled: no
+  when: nfs_installed.rc == 0
+
+

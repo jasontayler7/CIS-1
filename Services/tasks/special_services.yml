@@ -1,0 +1,74 @@
+---
+- name: Checking wheather the package rsh server is already installed or not.
+  command: rpm -q rsh rsh-server
+  args:
+  warn: no
+  register: rsh_installed
+  failed_when: rsh_installed.rc > 1
+  changed_when: no
+
+- name: Ensuring that rsh is not enabled.
+  systemd:
+     name: "{{ item }}"
+     enabled: no
+  when: rsh_installed.rc == 0
+  with_items:
+    - rsh.socket
+    - rlogin.socket
+    - rexec.socket
+
+- name: Checking wheather the package telnet server is already installed or not.
+  command: rpm -q telnet-server
+  args:
+  warn: no
+  register: telnet_installed
+  failed_when: telnet_installed.rc > 1
+  changed_when: no
+
+- name: Ensuring that telnet is not enabled.
+  systemd:
+     name: telnet.socket
+     enabled: no
+  when: telnet_installed.rc == 0
+
+- name: Checking wheather the package rsync server is already installed or not.
+  command: rpm -q rsync
+  args:
+  warn: no
+  register: rsync_installed
+  failed_when: rsync_installed.rc > 1
+  changed_when: no
+
+- name: Ensuring that rsync is not enabled.
+  systemd:
+     name: rsyncd
+     enabled: no
+  when: rsync_installed.rc == 0
+
+- name: Checking wheather the package talk server is already installed or not.
+  command: rpm -q talk-server
+  args:
+  warn: no
+  register: talk_installed
+  failed_when: talk_installed.rc > 1
+  changed_when: no
+
+- name: Ensuring that talk is not enabled.
+  systemd:
+     name: ntalk
+     enabled: no
+  when: talk_installed.rc == 0
+
+- name: Checking wheather the package tftp server is already installed or not.
+  command: rpm -q tftp-server
+  args:
+  warn: no
+  register: tftp_installed
+  failed_when: tftp_installed.rc > 1
+  changed_when: no
+
+- name: Ensuring that tftp is not enabled.
+  systemd:
+     name: tftp.socket
+     enabled: no
+  when: tftp_installed.rc == 0

@@ -1,18 +1,22 @@
 ---
 # tasks file for Services
+- name: Checking wheather the package xinetd is already installed or not.
+  command: rpm -q xinetd
+  args:
+  warn: no
+  register: is_installed
+  failed_when: is_installed.rc > 1
+  changed_when: no
+
 - name: Ensuring that chargen, daytime, echo, time are not active.
   action: command {{ item }}  
-  ignore_errors: yes
+  when: is_installed.rc == 0
   with_file:
     - basic_services  
 
 - name: Ensuring that rsh, talk, telnet-server, tftp, rsync are not enabled.
-  service:
-     name: "{{ item }}"
-     enabled: no
-  ignore_errors: yes
-  with_file:
-    - network_services
+  include: special_services.yml
+
 
 - name: Ensuring ntp is installed and configured.
   include: ntp.yml 
@@ -21,14 +25,18 @@
   include: chrony.yml
 
 - name: Ensuring X Windows is not installed on machine.
-  shell: rpm -qa xorg-x11*
-  register: result
+  command: rpm -q xorg-x11*
+  args:
+  warn: no
+  register: xwin_installed
+  failed_when: xwin_installed.rc > 1
+  changed_when: no
  
 - name: Removing Xwindows only if already installed.
   yum:
-     name: xorg-x11*
-     state: absent
-  when: result.stdout != ''
+    name: xorg-x11*
+    state: absent
+  when: xwin_installed.rc == 1  
 
 - name: Ensuring that Avahi is not installed.
   yum:
@@ -36,10 +44,5 @@
      state: absent
 
 - name: Ensuring that DHCP, LDAP, DNS, FTP, HTTP, POP3, IMAP, Samba, NFS server are not enabled.
-  service: 
-     name: "{{ item }}"
-     enabled: no
-  ignore_errors: yes
-  with_file:
-     - protocol_services
+  include: protocol_services.yml
 ...
